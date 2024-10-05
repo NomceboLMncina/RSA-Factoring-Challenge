@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# challenge
+
+validate_factors()
+{
+	if [ $# -ne 3 ];
+        then
+                arguments=("$@")
+                index=0
+                product=1
+                for item in ${arguments[*]};
+                do
+                        if [ $index -gt 1 ];
+                        then
+                                product=$(echo $item*$product | bc)
+                        fi
+                        index=$((index + 1))
+                done
+        else
+                product=$3
+        fi
+
+        factor1=$2
+        factor_expression=$(echo "$1" | tr ':' '=')
+
+        comparison_result=$(echo "if($product > $factor1) 1 else 0" | bc)
+	        if ((comparison_result == 1)); then
+		        temp=$factor1
+		        factor1=$product
+		        product=$temp
+                fi
+
+        echo "$factor_expression$factor1*$product"
+}
+
+if [ $# -ne 1 ]
+then
+        echo 'Usage: rsa <file>'
+        exit 1
+else
+
+        while read line
+        do
+
+                output=$(factor "$line")
+                validate_factors $output
+
+        done < "$1"
+fi
