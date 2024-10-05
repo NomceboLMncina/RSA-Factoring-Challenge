@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# RSA Factoring Challenge
+
+# Function to factorize a number
+factor_number() {
+    local n=$1
+    local p=2  # Start with the smallest prime factor
+    local q
+
+    # Find factors until n becomes 1
+    while [ $n -gt 1 ]; do
+        if [ $((n % p)) -eq 0 ]; then
+            q=$((n / p))
+            echo "$1=$p*$q"  # Output the factorization
+            return  # Exit the function after finding the first factor
+        fi
+        ((p++))  # Increment the potential factor
+    done
+}
+
+# Check if the correct number of arguments is provided
+if [ $# -ne 1 ]; then
+    echo 'Usage: factors <file>'
+    exit 1
+fi
+
+# Read each line from the input file and factorize the number
+while IFS= read -r number; do
+    factor_number "$number"
+done < "$1"
